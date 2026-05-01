@@ -1,0 +1,118 @@
+{
+  "spanish": {
+    "basics": {
+      "Greetings": [
+        {"sentence": "_____ días, ¿cómo estás?", "answer": "Buenos", "hint": "Morning greeting"},
+        {"sentence": "Muchas _____, por favor.", "answer": "gracias", "hint": "Thank you"},
+        {"sentence": "Lo _____, no entiendo.", "answer": "siento", "hint": "I'm sorry"},
+        {"sentence": "De _____, fue un placer.", "answer": "nada", "hint": "You're welcome"},
+        {"sentence": "Por _____, habla más despacio.", "answer": "favor", "hint": "Please"},
+        {"sentence": "Buenas _____, es tarde.", "answer": "noches", "hint": "Good night"},
+        {"sentence": "¿Cómo te _____?", "answer": "llamas", "hint": "What is your name?"},
+        {"sentence": "Hasta _____, amigo.", "answer": "luego", "hint": "See you later"}
+      ],
+      "Numbers": [
+        {"sentence": "Tengo _____ hermanos: Juan y María.", "answer": "dos", "hint": "Number 2"},
+        {"sentence": "El semáforo tiene _____ colores.", "answer": "tres", "hint": "Number 3"},
+        {"sentence": "Una semana tiene _____ días.", "answer": "siete", "hint": "Number 7"},
+        {"sentence": "Un año tiene _____ meses.", "answer": "doce", "hint": "Number 12"},
+        {"sentence": "Hay _____ estudiantes en la clase.", "answer": "veinte", "hint": "Number 20"}
+      ],
+      "Colors": [
+        {"sentence": "El cielo es de color _____.", "answer": "azul", "hint": "Color of sky"},
+        {"sentence": "La hierba es de color _____.", "answer": "verde", "hint": "Color of grass"},
+        {"sentence": "El sol es de color _____.", "answer": "amarillo", "hint": "Color of sun"},
+        {"sentence": "La sangre es de color _____.", "answer": "rojo", "hint": "Color of fire"},
+        {"sentence": "La noche es de color _____.", "answer": "negro", "hint": "Darkest color"},
+        {"sentence": "La nieve es de color _____.", "answer": "blanco", "hint": "Lightest color"}
+      ]
+    },
+    "food": {
+      "Fruits": [
+        {"sentence": "Me gusta comer una _____ roja.", "answer": "manzana", "hint": "Red fruit"},
+        {"sentence": "El _____ es una fruta amarilla y curvada.", "answer": "plátano", "hint": "Yellow curved fruit"},
+        {"sentence": "La _____ es muy dulce y roja.", "answer": "fresa", "hint": "Small red berry"},
+        {"sentence": "La _____ es verde por fuera y roja por dentro.", "answer": "sandía", "hint": "Large green fruit"},
+        {"sentence": "El _____ es una fruta tropical.", "answer": "mango", "hint": "Tropical fruit"},
+        {"sentence": "La _____ tiene zumo muy ácido.", "answer": "naranja", "hint": "Citrus fruit"}
+      ],
+      "Meals": [
+        {"sentence": "El _____ es la primera comida del día.", "answer": "desayuno", "hint": "First meal"},
+        {"sentence": "Comemos el _____ al mediodía.", "answer": "almuerzo", "hint": "Midday meal"},
+        {"sentence": "La _____ es la comida de la noche.", "answer": "cena", "hint": "Evening meal"},
+        {"sentence": "Me gusta la _____ caliente en invierno.", "answer": "sopa", "hint": "Liquid meal"},
+        {"sentence": "Como _____ con tomate y lechuga.", "answer": "ensalada", "hint": "Cold vegetable dish"}
+      ]
+    },
+    "travel": {
+      "Transport": [
+        {"sentence": "Viajamos en _____ de Madrid a Barcelona.", "answer": "tren", "hint": "Rail transport"},
+        {"sentence": "El _____ vuela a 10.000 metros de altura.", "answer": "avión", "hint": "Flies in sky"},
+        {"sentence": "Tomé un _____ para ir al aeropuerto.", "answer": "taxi", "hint": "Hired car"},
+        {"sentence": "El _____ pasa cada 10 minutos.", "answer": "autobús", "hint": "Public road transport"},
+        {"sentence": "Fui en _____ al parque.", "answer": "bicicleta", "hint": "Two-wheeled pedal vehicle"}
+      ],
+      "Directions": [
+        {"sentence": "Gira a la _____ en el semáforo.", "answer": "derecha", "hint": "Opposite of left"},
+        {"sentence": "Continúa todo _____ por la calle mayor.", "answer": "recto", "hint": "No turning"},
+        {"sentence": "El hotel está _____ del aeropuerto.", "answer": "cerca", "hint": "Short distance"},
+        {"sentence": "Mi casa está muy _____ del trabajo.", "answer": "lejos", "hint": "Long distance"},
+        {"sentence": "El norte está _____ en el mapa.", "answer": "arriba", "hint": "Up direction"}
+      ]
+    }
+  },
+  "french": {
+    "basics": {
+      "Greetings": [
+        {"sentence": "_____, comment vous appelez-vous?", "answer": "Bonjour", "hint": "Hello / Good morning"},
+        {"sentence": "Merci _____, c'est très gentil.", "answer": "beaucoup", "hint": "Very much"},
+        {"sentence": "Au _____, à bientôt!", "answer": "revoir", "hint": "Goodbye"},
+        {"sentence": "S'il vous _____, aidez-moi.", "answer": "plaît", "hint": "Please"},
+        {"sentence": "Bonne _____, dormez bien.", "answer": "nuit", "hint": "Good night"}
+      ],
+      "Colors": [
+        {"sentence": "Le ciel est _____.", "answer": "bleu", "hint": "Color of sky"},
+        {"sentence": "L'herbe est _____.", "answer": "verte", "hint": "Color of grass"},
+        {"sentence": "Le soleil est _____.", "answer": "jaune", "hint": "Color of sun"},
+        {"sentence": "La nuit est _____.", "answer": "noire", "hint": "Darkest color"},
+        {"sentence": "La neige est _____.", "answer": "blanche", "hint": "Lightest color"}
+      ]
+    },
+    "food": {
+      "Fruits": [
+        {"sentence": "J'aime manger une _____ rouge.", "answer": "pomme", "hint": "Red fruit"},
+        {"sentence": "La _____ est jaune et courbée.", "answer": "banane", "hint": "Yellow curved fruit"},
+        {"sentence": "La _____ est rouge et sucrée.", "answer": "fraise", "hint": "Small red berry"},
+        {"sentence": "Le _____ est un fruit tropical.", "answer": "mangue", "hint": "Tropical fruit"},
+        {"sentence": "Le _____ est vert à l'extérieur.", "answer": "kiwi", "hint": "Brown fuzzy fruit"}
+      ]
+    }
+  },
+  "german": {
+    "basics": {
+      "Greetings": [
+        {"sentence": "_____ Morgen, wie geht es Ihnen?", "answer": "Guten", "hint": "Good morning"},
+        {"sentence": "Vielen _____ für Ihre Hilfe.", "answer": "Dank", "hint": "Thank you"},
+        {"sentence": "Auf _____, bis morgen!", "answer": "Wiedersehen", "hint": "Goodbye"},
+        {"sentence": "Gute _____, schlafen Sie gut.", "answer": "Nacht", "hint": "Good night"},
+        {"sentence": "_____, können Sie mir helfen?", "answer": "Bitte", "hint": "Please"}
+      ],
+      "Colors": [
+        {"sentence": "Der Himmel ist _____.", "answer": "blau", "hint": "Color of sky"},
+        {"sentence": "Das Gras ist _____.", "answer": "grün", "hint": "Color of grass"},
+        {"sentence": "Die Sonne ist _____.", "answer": "gelb", "hint": "Color of sun"},
+        {"sentence": "Die Nacht ist _____.", "answer": "schwarz", "hint": "Darkest color"},
+        {"sentence": "Der Schnee ist _____.", "answer": "weiß", "hint": "Lightest color"}
+      ]
+    },
+    "food": {
+      "Fruits": [
+        {"sentence": "Ich esse gern einen _____.", "answer": "Apfel", "hint": "Red or green fruit"},
+        {"sentence": "Die _____ ist gelb und gebogen.", "answer": "Banane", "hint": "Yellow curved fruit"},
+        {"sentence": "Die _____ ist rot und süß.", "answer": "Erdbeere", "hint": "Small red berry"},
+        {"sentence": "Die _____ schmeckt sauer.", "answer": "Zitrone", "hint": "Sour yellow citrus"},
+        {"sentence": "Der _____ ist eine tropische Frucht.", "answer": "Mango", "hint": "Tropical fruit"}
+      ]
+    }
+  }
+}

@@ -1,0 +1,92 @@
+{
+  "languages": [
+    {
+      "id": "spanish",
+      "name": "Spanish",
+      "flag": "🇪🇸",
+      "categories": [
+        {
+          "id": "basics",
+          "name": "Basics",
+          "subcategories": ["Greetings", "Numbers", "Colors", "Days"]
+        },
+        {
+          "id": "food",
+          "name": "Food & Drink",
+          "subcategories": ["Fruits", "Vegetables", "Meals", "Drinks"]
+        },
+        {
+          "id": "travel",
+          "name": "Travel",
+          "subcategories": ["Transport", "Hotel", "Directions", "Shopping"]
+        },
+        {
+          "id": "body",
+          "name": "Body & Health",
+          "subcategories": ["Body Parts", "Feelings", "Illness", "Fitness"]
+        }
+      ]
+    },
+    {
+      "id": "french",
+      "name": "French",
+      "flag": "🇫🇷",
+      "categories": [
+        {
+          "id": "basics",
+          "name": "Basics",
+          "subcategories": ["Greetings", "Numbers", "Colors", "Days"]
+        },
+        {
+          "id": "food",
+          "name": "Food & Drink",
+          "subcategories": ["Fruits", "Vegetables", "Meals", "Drinks"]
+        },
+        {
+          "id": "travel",
+          "name": "Travel",
+          "subcategories": ["Transport", "Hotel", "Directions", "Shopping"]
+        }
+      ]
+    },
+    {
+      "id": "german",
+      "name": "German",
+      "flag": "🇩🇪",
+      "categories": [
+        {
+          "id": "basics",
+          "name": "Basics",
+          "subcategories": ["Greetings", "Numbers", "Colors", "Days"]
+        },
+        {
+          "id": "food",
+          "name": "Food & Drink",
+          "subcategories": ["Fruits", "Vegetables", "Meals", "Drinks"]
+        },
+        {
+          "id": "travel",
+          "name": "Travel",
+          "subcategories": ["Transport", "Hotel", "Directions", "Shopping"]
+        }
+      ]
+    },
+    {
+      "id": "japanese",
+      "name": "Japanese",
+      "flag": "🇯🇵",
+      "categories": [
+        {
+          "id": "basics",
+          "name": "Basics",
+          "subcategories": ["Greetings", "Numbers", "Colors", "Days"]
+        },
+        {
+          "id": "food",
+          "name": "Food & Drink",
+          "subcategories": ["Fruits", "Vegetables", "Meals", "Drinks"]
+        }
+      ]
+    }
+  ]
+}

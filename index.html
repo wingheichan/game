@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>LinguaPlay — Learn Languages Through Games</title>
-  <meta name="description" content="Learn Latin, French, German and Japanese through fun interactive games: Quiz, Memory Cards, Falling Fruits and Fill-in-the-Blank." />
+  <meta name="description" content="Learn Spanish, French, German and Japanese through fun interactive games: Quiz, Memory Cards, Falling Fruits and Fill-in-the-Blank." />
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌍</text></svg>" />
   <link rel="stylesheet" href="games/style.css" />
 </head>
@@ -173,6 +173,7 @@
 <div id="page-falling" class="page">
   <div class="container" style="max-width:860px">
 
+    <!-- HUD: score / timer / lives — OUTSIDE game canvas, never wiped -->
     <div class="game-hud mt-md">
       <div class="hud-item">
         <span class="hud-label">Score</span>
@@ -189,31 +190,38 @@
       <button class="btn btn-secondary btn-sm" onclick="App.showPage('home')">✕ Quit</button>
     </div>
 
-    <!-- Word-to-spell display -->
+    <!-- Question panel — OUTSIDE game canvas, never wiped by setupGame() -->
     <div style="
       background: var(--bg-card);
       border: 1px solid var(--border);
       border-radius: var(--radius-md);
-      padding: 12px 20px;
-      margin-bottom: 12px;
+      padding: 14px 20px;
+      margin-bottom: 8px;
       text-align: center;
     ">
-      <div style="font-size:0.72rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);margin-bottom:6px">Spell this word:</div>
-      <div id="falling-word-display" style="display:flex;gap:4px;justify-content:center;flex-wrap:wrap;min-height:44px;align-items:center"></div>
+      <div style="font-size:0.7rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);margin-bottom:4px">Translate this word:</div>
+      <div id="falling-question-text" style="font-family:var(--font-display);font-size:2rem;color:var(--accent-sun);line-height:1.2">–</div>
+      <div id="falling-hint" style="font-size:0.78rem;color:var(--text-muted);margin-top:2px;font-style:italic"></div>
     </div>
 
-    <!-- Game canvas area -->
-    <div id="falling-game-area" style="position:relative;">
-      <!-- Question header -->
-      <div class="falling-question" style="position:sticky;top:0;z-index:10">
-        <div id="falling-question-text" style="font-family:var(--font-display);font-size:1.5rem;color:var(--accent-sun)">Loading…</div>
-        <small id="falling-hint"></small>
-      </div>
-      <!-- Fruits and basket rendered by JS -->
+    <!-- Letter progress display — OUTSIDE game canvas, never wiped -->
+    <div style="
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 10px 20px;
+      margin-bottom: 10px;
+      text-align: center;
+    ">
+      <div style="font-size:0.7rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);margin-bottom:6px">Catch the letters to spell:</div>
+      <div id="falling-word-display" style="display:flex;gap:4px;justify-content:center;flex-wrap:wrap;min-height:40px;align-items:center"></div>
     </div>
+
+    <!-- Game canvas — JS wipes this with innerHTML='' on each init, that's fine -->
+    <div id="falling-game-area"></div>
 
     <p class="text-center mt-sm" style="font-size:0.8rem;color:var(--text-muted)">
-      🖱️ Move mouse or use ← → arrow keys to move the basket
+      🖱️ Move mouse · 📱 Touch to drag · ⌨️ Arrow keys
     </p>
 
   </div>

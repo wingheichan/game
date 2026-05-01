@@ -1,293 +1,281 @@
 // ============================================================
-//  LinguaPlay — Falling Fruits Game Module
-// ============================================================
-//  Question shown at top. Fruits with answer letters fall.
-//  Player moves basket with mouse/touch to catch correct letters.
-//  Collect correct letters to spell the translation.
+//  LinguaPlay — Falling Fruits Game  (fixed rewrite)
 // ============================================================
 
 const FallingGame = (() => {
-  const FRUITS = ['🍎','🍊','🍋','🍇','🍓','🍑','🍍','🥭','🍈','🫐','🍒','🥝'];
-  const GAME_TIME = 90;
-  const FALL_SPEED_INIT = 1.5;
-  const FRUIT_SPAWN_RATE = 1800; // ms
 
-  let words = [];
-  let currentWordIdx = 0;
-  let currentTarget = '';
-  let collectedLetters = [];
-  let score = 0;
-  let lives = 3;
-  let gameTimer = null;
+  const FRUITS     = ['🍎','🍊','🍋','🍇','🍓','🍑','🍍','🥭','🍈','🫐','🍒','🥝'];
+  const GAME_TIME  = 90;
+  const SPEED_INIT = 1.8;
+  const SPEED_MAX  = 5.0;
+  const SPAWN_MS   = 1600;
+  const BASKET_HW  = 52;   // basket half-width for collision
+
+  let words = [], wordIdx = 0;
+  let targetWord = '', targetAnswer = '', targetClean = '';
+  let collected  = [];   // correctly caught letters (no spaces)
+
+  let score = 0, lives = 3, fallSpeed = SPEED_INIT;
   let timeLeft = GAME_TIME;
-  let spawnInterval = null;
-  let fruits = [];
-  let animFrame = null;
-  let basketX = 0;
-  let gameArea = null;
-  let gameRunning = false;
-  let fallSpeed = FALL_SPEED_INIT;
 
-  // ── Init ───────────────────────────────────────────────────
+  let gameTimer = null, spawnTimer = null, animFrame = null;
+  let gameRunning = false;
+
+  let fruits   = [];   // active fruit objects {el, x, y, letter, speed, wobble, dead}
+  let basketX  = 300;
+  let gameArea = null;
+
+  // ── Init ────────────────────────────────────────────────────
   async function init() {
     const { language, category, subcategory } = App.state;
-    words = await App.getVocabulary(language, category, subcategory);
-    if (!words.length) { App.toast('No vocabulary found!', 'error'); return; }
+    const raw = await App.getVocabulary(language, category, subcategory);
+    if (!raw || !raw.length) { App.toast('No vocabulary found!', 'error'); return; }
 
-    currentWordIdx = 0;
-    score = 0;
-    lives = 3;
-    fruits = [];
-    collectedLetters = [];
-    timeLeft = GAME_TIME;
-    fallSpeed = FALL_SPEED_INIT;
+    // Hard-reset every piece of state so replaying works cleanly
+    words      = App.shuffle([...raw]);
+    wordIdx    = 0;
+    score      = 0;
+    lives      = 3;
+    fallSpeed  = SPEED_INIT;
+    timeLeft   = GAME_TIME;
+    collected  = [];
+    fruits     = [];
+    gameRunning = false;
+
+    clearInterval(gameTimer);
+    clearInterval(spawnTimer);
+    cancelAnimationFrame(animFrame);
+    document.removeEventListener('keydown', onKeyDown);
+
     App.showPage('falling');
-    setupGame();
+    // wait one frame so the page is rendered and offsetWidth is valid
+    requestAnimationFrame(() => requestAnimationFrame(setupGame));
   }
 
-  // ── Setup ──────────────────────────────────────────────────
+  // ── Setup canvas (called AFTER page is visible) ─────────────
   function setupGame() {
     gameArea = document.getElementById('falling-game-area');
     if (!gameArea) return;
+
+    // Wipe only the canvas — question/HUD/word-display live outside it
     gameArea.innerHTML = '';
 
-    // Stars background
-    for (let i = 0; i < 30; i++) {
-      const star = document.createElement('div');
-      star.className = 'falling-star';
-      star.style.cssText = `
-        left: ${Math.random()*100}%;
-        top: ${Math.random()*100}%;
-        animation-delay: ${Math.random()*3}s;
-        animation-duration: ${2 + Math.random()*3}s;
-      `;
-      gameArea.appendChild(star);
+    // Decorative stars
+    for (let i = 0; i < 25; i++) {
+      const s = document.createElement('div');
+      s.className = 'falling-star';
+      s.style.cssText =
+        `left:${Math.random()*100}%;top:${Math.random()*100}%;` +
+        `animation-delay:${(Math.random()*3).toFixed(2)}s;` +
+        `animation-duration:${(2+Math.random()*3).toFixed(2)}s;`;
+      gameArea.appendChild(s);
     }
 
     // Basket
-    const basket = document.createElement('div');
-    basket.className = 'basket';
-    basket.id = 'basket';
-    basket.innerHTML = `
-      <div class="basket-handle"></div>
-      <div class="basket-body">
-        <div class="basket-weave"></div>
-      </div>
-    `;
-    gameArea.appendChild(basket);
-    basketX = gameArea.offsetWidth / 2;
-    positionBasket();
+    const b = document.createElement('div');
+    b.id = 'basket';
+    b.className = 'basket';
+    b.innerHTML = `<div class="basket-handle"></div>
+                   <div class="basket-body"><div class="basket-weave"></div></div>`;
+    gameArea.appendChild(b);
 
-    // Mouse/touch controls
+    basketX = gameArea.offsetWidth / 2;
+    moveBasket();
+
+    // Controls
     gameArea.addEventListener('mousemove', onMouseMove);
-    gameArea.addEventListener('touchmove', onTouchMove, { passive: true });
-    // Keyboard
+    gameArea.addEventListener('touchmove',  onTouchMove, { passive: true });
     document.addEventListener('keydown', onKeyDown);
 
+    // Kick everything off
     loadWord();
-    startTimer();
-    startSpawning();
+    startGameTimer();
+    spawnFruit();
+    spawnTimer  = setInterval(spawnFruit, SPAWN_MS);
     gameRunning = true;
-    requestAnimationFrame(gameLoop);
+    animFrame   = requestAnimationFrame(loop);
   }
 
+  // ── Controls ────────────────────────────────────────────────
   function onMouseMove(e) {
-    const rect = gameArea.getBoundingClientRect();
-    basketX = e.clientX - rect.left;
-    positionBasket();
+    basketX = clamp(e.clientX - gameArea.getBoundingClientRect().left);
+    moveBasket();
   }
-
   function onTouchMove(e) {
-    const rect = gameArea.getBoundingClientRect();
-    basketX = e.touches[0].clientX - rect.left;
-    positionBasket();
+    basketX = clamp(e.touches[0].clientX - gameArea.getBoundingClientRect().left);
+    moveBasket();
   }
-
-  let moveDir = 0;
   function onKeyDown(e) {
     if (!gameRunning) return;
-    if (e.key === 'ArrowLeft')  { basketX = Math.max(50, basketX - 30); positionBasket(); }
-    if (e.key === 'ArrowRight') { basketX = Math.min(gameArea.offsetWidth - 50, basketX + 30); positionBasket(); }
+    if (e.key === 'ArrowLeft')  { basketX = clamp(basketX - 32); moveBasket(); }
+    if (e.key === 'ArrowRight') { basketX = clamp(basketX + 32); moveBasket(); }
   }
-
-  function positionBasket() {
+  function clamp(x) { return Math.max(BASKET_HW, Math.min(gameArea.offsetWidth - BASKET_HW, x)); }
+  function moveBasket() {
     const b = document.getElementById('basket');
-    if (!b) return;
-    const w = gameArea.offsetWidth;
-    basketX = Math.max(50, Math.min(w - 50, basketX));
-    b.style.left = basketX + 'px';
+    if (b) b.style.left = basketX + 'px';
   }
 
-  // ── Current Word ───────────────────────────────────────────
+  // ── Word management ──────────────────────────────────────────
   function loadWord() {
-    if (currentWordIdx >= words.length) { currentWordIdx = 0; App.shuffle(words); }
-    const word = words[currentWordIdx];
-    currentTarget = word.translation.toUpperCase();
-    collectedLetters = [];
-    updateWordDisplay();
-    updateQuestion(word);
-    currentWordIdx++;
-  }
+    if (wordIdx >= words.length) { wordIdx = 0; words = App.shuffle([...words]); }
+    const w     = words[wordIdx++];
+    targetWord  = w.word;
+    targetAnswer = w.translation.toUpperCase();
+    targetClean  = targetAnswer.replace(/ /g, '');
+    collected    = [];
 
-  function updateQuestion(word) {
-    const qEl = document.getElementById('falling-question-text');
+    // These elements live OUTSIDE the canvas — always safe to update
+    const qEl   = document.getElementById('falling-question-text');
     const hintEl = document.getElementById('falling-hint');
-    if (qEl) qEl.textContent = word.word;
-    if (hintEl) hintEl.textContent = `Catch the letters to spell: ${word.translation}`;
+    if (qEl)    qEl.textContent  = targetWord;
+    if (hintEl) hintEl.textContent = `Hint: ${w.hint}`;
+
+    redrawSlots();
   }
 
-  function updateWordDisplay() {
+  function redrawSlots() {
     const el = document.getElementById('falling-word-display');
     if (!el) return;
-    el.innerHTML = currentTarget.split('').map((ch, i) => {
-      const filled = i < collectedLetters.length && collectedLetters[i] === ch;
+    let ci = 0;
+    el.innerHTML = targetAnswer.split('').map(ch => {
+      if (ch === ' ') return `<span style="display:inline-block;width:14px"></span>`;
+      const filled = ci < collected.length;
+      const disp   = filled ? collected[ci] : '_';
+      ci++;
       return `<span style="
-        display:inline-block;
-        min-width:28px;
-        margin:0 2px;
-        padding:4px 6px;
-        border-bottom: 3px solid ${filled ? 'var(--accent-mint)' : 'var(--accent-grape)'};
-        color: ${filled ? 'var(--accent-mint)' : 'var(--text-muted)'};
-        font-family: var(--font-mono);
-        font-size: 1.2rem;
-        font-weight:700;
-        text-align:center;
-      ">${filled ? ch : (ch === ' ' ? '&nbsp;' : '_')}</span>`;
+        display:inline-block;min-width:26px;margin:0 2px;padding:3px 5px;
+        border-bottom:3px solid ${filled ? 'var(--accent-mint)' : 'var(--accent-grape)'};
+        color:${filled ? 'var(--accent-mint)' : 'var(--text-muted)'};
+        font-family:var(--font-mono);font-size:1.1rem;font-weight:700;text-align:center;
+      ">${disp}</span>`;
     }).join('');
   }
 
-  // ── Fruit Spawning ─────────────────────────────────────────
-  function startSpawning() {
-    clearInterval(spawnInterval);
-    spawnInterval = setInterval(spawnFruit, FRUIT_SPAWN_RATE);
-    spawnFruit(); // immediate first
-  }
-
+  // ── Spawning ─────────────────────────────────────────────────
   function spawnFruit() {
-    if (!gameRunning) return;
-    const areaW = gameArea.offsetWidth;
+    if (!gameRunning || !gameArea) return;
 
-    // Decide letter: sometimes correct next letter, sometimes distractor
-    const nextIdx = collectedLetters.length;
-    const nextLetter = (nextIdx < currentTarget.replace(/ /g, '').length)
-      ? currentTarget.replace(/ /g, '')[nextIdx]
-      : null;
-
-    let letter;
-    // 40% chance of correct letter, 60% distractor
-    if (nextLetter && Math.random() < 0.4) {
-      letter = nextLetter;
-    } else {
-      letter = randomLetter();
-    }
+    const areaW  = gameArea.offsetWidth || 600;
+    const needed = targetClean[collected.length] || null;
+    // 45 % chance of spawning the correct next letter
+    const letter = (needed && Math.random() < 0.45) ? needed : randomLetter(needed);
 
     const emoji = FRUITS[Math.floor(Math.random() * FRUITS.length)];
-    const x = 40 + Math.random() * (areaW - 80);
-    const y = 60; // start below header
+    const x     = 40 + Math.random() * (areaW - 80);
 
     const el = document.createElement('div');
     el.className = 'fruit-item';
-    el.style.cssText = `left: ${x}px; top: ${y}px;`;
-    el.innerHTML = `
-      <div class="fruit-emoji">${emoji}</div>
-      <div class="fruit-letter">${letter}</div>
-    `;
+    // position:absolute; start ABOVE the visible canvas (negative y)
+    el.style.cssText = `position:absolute;left:${x}px;top:-70px;pointer-events:none;`;
+    el.innerHTML = `<div class="fruit-emoji">${emoji}</div>
+                    <div class="fruit-letter">${letter}</div>`;
     gameArea.appendChild(el);
 
-    fruits.push({
-      el, x, y,
-      letter,
-      speed: fallSpeed + Math.random() * 1.5,
-      wobble: Math.random() * Math.PI * 2
-    });
+    fruits.push({ el, x, y: -70, letter,
+      speed:  fallSpeed + Math.random() * 1.2,
+      wobble: Math.random() * Math.PI * 2,
+      dead:   false });
   }
 
-  function randomLetter() {
-    // Distractor: letters from the target word or random
-    const pool = 'ABCDEFGHIJKLMNOPRSTW';
-    return pool[Math.floor(Math.random() * pool.length)];
+  function randomLetter(exclude) {
+    const pool = 'ABCDEFGHIJKLMNOPRSTUW';
+    let ch, t = 0;
+    do { ch = pool[Math.floor(Math.random() * pool.length)]; } while (ch === exclude && ++t < 10);
+    return ch;
   }
 
-  // ── Game Loop ──────────────────────────────────────────────
-  function gameLoop() {
+  // ── Game loop ────────────────────────────────────────────────
+  function loop() {
     if (!gameRunning) return;
-    const areaH = gameArea.offsetHeight;
-    const areaW = gameArea.offsetWidth;
-    const basketLeft  = basketX - 50;
-    const basketRight = basketX + 50;
-    const basketTop   = areaH - 60;
 
-    fruits = fruits.filter(f => {
-      f.wobble += 0.03;
-      f.y += f.speed;
-      f.x += Math.sin(f.wobble) * 0.5;
+    const areaH   = gameArea.offsetHeight || 480;
+    const bTop    = areaH - 58;          // y-coordinate of basket top edge
+    const bLeft   = basketX - BASKET_HW;
+    const bRight  = basketX + BASKET_HW;
+
+    for (let i = fruits.length - 1; i >= 0; i--) {
+      const f = fruits[i];
+      if (f.dead) { fruits.splice(i, 1); continue; }
+
+      // Move fruit
+      f.wobble += 0.025;
+      f.y      += f.speed;
+      f.x      += Math.sin(f.wobble) * 0.6;
       f.el.style.top  = f.y + 'px';
       f.el.style.left = f.x + 'px';
 
-      // Catch check
-      const fruitMid = f.x + 12;
-      const fruitBottom = f.y + 70;
-      if (fruitBottom >= basketTop && fruitMid >= basketLeft && fruitMid <= basketRight) {
-        catchFruit(f);
+      const cx     = f.x + 18;   // fruit centre-x
+      const bottom = f.y + 68;   // fruit bottom
+
+      // Basket collision
+      if (bottom >= bTop && cx >= bLeft && cx <= bRight) {
+        f.dead = true;
         f.el.remove();
-        return false;
+        fruits.splice(i, 1);
+        onCatch(f.letter, f.x, bTop);
+        continue;
       }
 
-      // Fallen off screen
-      if (f.y > areaH) {
+      // Off-screen bottom
+      if (f.y > areaH + 10) {
+        f.dead = true;
         f.el.remove();
-        return false;
+        fruits.splice(i, 1);
       }
-      return true;
-    });
-
-    animFrame = requestAnimationFrame(gameLoop);
-  }
-
-  // ── Catch Logic ────────────────────────────────────────────
-  function catchFruit(f) {
-    const nextIdx = collectedLetters.length;
-    // Skip spaces
-    let targetIdx = nextIdx;
-    while (targetIdx < currentTarget.length && currentTarget[targetIdx] === ' ') {
-      collectedLetters.push(' ');
-      targetIdx++;
     }
 
-    const expected = currentTarget[targetIdx];
+    animFrame = requestAnimationFrame(loop);
+  }
 
-    if (f.letter === expected) {
-      collectedLetters.push(f.letter);
+  // ── Catch handler ─────────────────────────────────────────────
+  function onCatch(letter, fx, bTop) {
+    const expected = targetClean[collected.length];
+
+    if (letter === expected) {
+      collected.push(letter);
       score += 20;
-      updateHUD();
-      updateWordDisplay();
-      showCatchFlash(f.x, basketTop - 40, `+20`, false);
-      App.toast(`✅ ${f.letter}`, 'success', 600);
+      updateScoreEl();
+      redrawSlots();
+      popText(fx, bTop - 36, '+20', false);
 
-      // Check word complete
-      const cleaned = currentTarget.replace(/ /g, '');
-      const collected = collectedLetters.filter(c => c !== ' ');
-      if (collected.length >= cleaned.length) {
+      if (collected.length >= targetClean.length) {
+        // Word complete!
         score += 50;
-        App.toast(`🎉 Word complete! +50 bonus`, 'success', 1500);
-        showCatchFlash(basketX, basketTop - 80, `🎉 +50!`, false);
-        setTimeout(loadWord, 1200);
+        updateScoreEl();
+        popText(basketX - 20, bTop - 80, '🎉 +50!', false);
+        App.toast(`🎉 "${targetWord}" = "${targetAnswer}"  +50 bonus!`, 'success', 1800);
+
+        clearInterval(spawnTimer);
+        // Remove all fruits still on screen
+        fruits.forEach(f => { f.dead = true; f.el.remove(); });
+        fruits = [];
+
+        setTimeout(() => {
+          if (!gameRunning) return;
+          loadWord();
+          spawnFruit();
+          spawnTimer = setInterval(spawnFruit, SPAWN_MS);
+        }, 1300);
       }
+
     } else {
       lives--;
       score = Math.max(0, score - 10);
-      updateHUD();
-      updateLivesDisplay();
-      showCatchFlash(f.x, basketTop - 40, `-10`, true);
+      updateScoreEl();
+      updateLivesEl();
+      popText(fx, bTop - 36, '-10', true);
       shakeBasket();
-      if (lives <= 0) { endGame(); }
+      if (lives <= 0) endGame();
     }
   }
 
-  function showCatchFlash(x, y, text, isWrong) {
+  // ── Visual helpers ────────────────────────────────────────────
+  function popText(x, y, text, bad) {
+    if (!gameArea) return;
     const el = document.createElement('div');
-    el.className = `catch-flash ${isWrong ? 'wrong' : ''}`;
-    el.style.cssText = `left:${x}px; top:${y}px;`;
+    el.className = `catch-flash${bad ? ' wrong' : ''}`;
+    el.style.cssText = `left:${x}px;top:${y}px;`;
     el.textContent = text;
     gameArea.appendChild(el);
     setTimeout(() => el.remove(), 900);
@@ -300,48 +288,52 @@ const FallingGame = (() => {
     setTimeout(() => b.classList.remove('shake'), 400);
   }
 
-  // ── HUD ────────────────────────────────────────────────────
-  function updateHUD() {
-    const scoreEl = document.getElementById('falling-score');
-    if (scoreEl) scoreEl.textContent = score;
+  function updateScoreEl() {
+    const el = document.getElementById('falling-score');
+    if (el) el.textContent = score;
   }
 
-  function updateLivesDisplay() {
+  function updateLivesEl() {
     const el = document.getElementById('falling-lives');
-    if (el) el.textContent = '❤️'.repeat(lives) + '🖤'.repeat(Math.max(0, 3 - lives));
+    if (el) el.textContent = '❤️'.repeat(Math.max(0, lives)) + '🖤'.repeat(Math.max(0, 3 - lives));
   }
 
-  // ── Timer ──────────────────────────────────────────────────
-  function startTimer() {
-    updateTimerDisplay(timeLeft);
+  // ── Timer ─────────────────────────────────────────────────────
+  function startGameTimer() {
+    setTimerEl(timeLeft);
     gameTimer = setInterval(() => {
       timeLeft--;
-      updateTimerDisplay(timeLeft);
-      // Increase speed every 20s
-      if (timeLeft % 20 === 0 && timeLeft > 0) {
-        fallSpeed += 0.3;
-      }
+      setTimerEl(timeLeft);
+      fallSpeed = Math.min(SPEED_MAX, SPEED_INIT + (GAME_TIME - timeLeft) * 0.03);
       if (timeLeft <= 0) endGame();
     }, 1000);
   }
 
-  function updateTimerDisplay(t) {
+  function setTimerEl(t) {
     const el = document.getElementById('falling-timer');
     if (el) el.textContent = `${Math.floor(t/60)}:${String(t%60).padStart(2,'0')}`;
   }
 
-  // ── End ────────────────────────────────────────────────────
+  // ── End ───────────────────────────────────────────────────────
   function endGame() {
+    if (!gameRunning) return;
     gameRunning = false;
     clearInterval(gameTimer);
-    clearInterval(spawnInterval);
+    clearInterval(spawnTimer);
     cancelAnimationFrame(animFrame);
     document.removeEventListener('keydown', onKeyDown);
+    fruits.forEach(f => { f.dead = true; f.el.remove(); });
+    fruits = [];
 
-    // Count completed words as "correct"
-    const correct = Math.floor(score / 70);
-    const total = Math.max(correct, words.length);
-    UI.showResults({ score, correct, total, timeLeft, maxTime: GAME_TIME, gameType: 'falling' });
+    const wordsCompleted = Math.floor(score / 70);
+    UI.showResults({
+      score,
+      correct: wordsCompleted,
+      total:   Math.max(wordsCompleted + 1, 5),
+      timeLeft,
+      maxTime: GAME_TIME,
+      gameType: 'falling'
+    });
   }
 
   return { init };

@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LinguaPlay — Learn Languages Through Games</title>
+  <meta name="description" content="Learn Spanish, French, German and Japanese through fun interactive games: Quiz, Memory Cards, Falling Fruits and Fill-in-the-Blank." />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌍</text></svg>" />
+  <link rel="stylesheet" href="games/style.css" />
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════════
+     NAVIGATION
+════════════════════════════════════════════════════════════ -->
+<nav id="nav">
+  <div class="container nav-inner">
+    <div class="nav-logo" onclick="App.showPage('home')">🌍 LinguaPlay</div>
+    <ul class="nav-links">
+      <li><button data-page="home"       onclick="App.showPage('home')">🏠 Home</button></li>
+      <li><button data-page="highscores" onclick="App.showPage('highscores'); HighScores.render()">🏆 High Scores</button></li>
+      <li><button onclick="UI.promptName()">👤 <span id="nav-player-name">Player</span></button></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- ═══════════════════════════════════════════════════════════
+     PAGE: HOME
+════════════════════════════════════════════════════════════ -->
+<div id="page-home" class="page active">
+  <div class="container">
+
+    <!-- Hero -->
+    <div class="hero">
+      <div class="hero-badge">🎮 4 Games &nbsp;•&nbsp; 4 Languages &nbsp;•&nbsp; 100s of Words</div>
+      <h1>Learn Languages<br/>by Playing Games</h1>
+      <p>Pick a language, choose a topic, and dive into interactive games that make vocabulary stick.</p>
+    </div>
+
+    <!-- Language Selection -->
+    <h2 class="text-center mb-md">1. Choose Your Language</h2>
+    <div class="lang-grid" id="lang-grid">
+      <!-- Populated by JS -->
+      <div style="text-align:center;padding:40px;color:var(--text-muted);grid-column:1/-1">Loading languages…</div>
+    </div>
+
+    <!-- Category Selection -->
+    <div id="category-section" class="category-section hidden mt-lg">
+      <h3>2. Pick a Topic</h3>
+      <div class="cat-buttons" id="cat-buttons"></div>
+      <div class="cat-buttons" id="subcat-buttons"></div>
+    </div>
+
+    <!-- Game Selection -->
+    <div id="game-select-section" class="hidden mt-lg">
+      <h2 class="text-center mb-md">3. Pick a Game</h2>
+      <div class="games-grid">
+
+        <div class="game-card" data-game="quiz" onclick="UI.launchGame('quiz')">
+          <span class="game-card-icon" style="color:var(--accent-sky)">🎯</span>
+          <h3>Quiz</h3>
+          <p>Choose the correct translation from 4 options. Race the clock!</p>
+        </div>
+
+        <div class="game-card" data-game="memory" onclick="UI.launchGame('memory')">
+          <span class="game-card-icon" style="color:var(--accent-grape)">🧠</span>
+          <h3>Memory Match</h3>
+          <p>Match words on the left to translations on the right. Three difficulty modes!</p>
+        </div>
+
+        <div class="game-card" data-game="falling" onclick="UI.launchGame('falling')">
+          <span class="game-card-icon" style="color:var(--accent-lime)">🍎</span>
+          <h3>Falling Fruits</h3>
+          <p>Catch falling fruits with the right letters to spell the translation!</p>
+        </div>
+
+        <div class="game-card" data-game="fill" onclick="UI.launchGame('fill')">
+          <span class="game-card-icon" style="color:var(--accent-coral)">✍️</span>
+          <h3>Fill the Blank</h3>
+          <p>Complete the sentence by typing the missing word.</p>
+        </div>
+
+      </div>
+    </div>
+
+  </div><!-- /container -->
+</div><!-- /page-home -->
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     PAGE: QUIZ GAME
+════════════════════════════════════════════════════════════ -->
+<div id="page-quiz" class="page">
+  <div class="container" style="max-width:700px">
+
+    <div class="game-hud mt-md">
+      <div class="hud-item">
+        <span class="hud-label">Score</span>
+        <span class="hud-value" id="quiz-score">0</span>
+      </div>
+      <div class="hud-item">
+        <div class="timer-ring-wrap">
+          <svg class="timer-ring" width="52" height="52" viewBox="0 0 52 52">
+            <circle class="bg" cx="26" cy="26" r="22"/>
+            <circle class="fg" cx="26" cy="26" r="22" stroke-dasharray="138 138"/>
+          </svg>
+          <div class="timer-center">20</div>
+        </div>
+      </div>
+      <div class="hud-item">
+        <span class="hud-label">Progress</span>
+        <span class="hud-value" id="quiz-correct" style="font-size:1rem">0/10</span>
+      </div>
+      <button class="btn btn-secondary btn-sm" onclick="App.showPage('home')">✕ Quit</button>
+    </div>
+
+    <div id="quiz-container">
+      <!-- Populated by QuizGame.js -->
+    </div>
+
+  </div>
+</div><!-- /page-quiz -->
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     PAGE: MEMORY GAME
+════════════════════════════════════════════════════════════ -->
+<div id="page-memory" class="page">
+  <div class="container" style="max-width:860px">
+
+    <div class="game-hud mt-md">
+      <div class="hud-item">
+        <span class="hud-label">Score</span>
+        <span class="hud-value" id="memory-score">0</span>
+      </div>
+      <div class="hud-item">
+        <span class="hud-label">Time</span>
+        <span class="hud-value" id="memory-timer">2:00</span>
+      </div>
+      <div class="hud-item">
+        <span class="hud-label">Matched</span>
+        <span class="hud-value" id="memory-matches">0/8</span>
+      </div>
+      <button class="btn btn-secondary btn-sm" onclick="App.showPage('home')">✕ Quit</button>
+    </div>
+
+    <!-- Mode selection -->
+    <div class="memory-mode-select">
+      <button class="mode-btn active" data-mode="1" onclick="MemoryGame.setMode(1)">
+        🔒 Mode 1 — All Hidden
+      </button>
+      <button class="mode-btn" data-mode="2" onclick="MemoryGame.setMode(2)">
+        👁 Mode 2 — Peek 10s
+      </button>
+      <button class="mode-btn" data-mode="3" onclick="MemoryGame.setMode(3)">
+        📖 Mode 3 — All Open
+      </button>
+    </div>
+
+    <div id="memory-countdown" class="memory-countdown"></div>
+
+    <div class="memory-board" id="memory-board">
+      <!-- Populated by MemoryGame.js -->
+    </div>
+
+  </div>
+</div><!-- /page-memory -->
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     PAGE: FALLING FRUITS GAME
+════════════════════════════════════════════════════════════ -->
+<div id="page-falling" class="page">
+  <div class="container" style="max-width:860px">
+
+    <div class="game-hud mt-md">
+      <div class="hud-item">
+        <span class="hud-label">Score</span>
+        <span class="hud-value" id="falling-score">0</span>
+      </div>
+      <div class="hud-item">
+        <span class="hud-label">Time</span>
+        <span class="hud-value" id="falling-timer">1:30</span>
+      </div>
+      <div class="hud-item">
+        <span class="hud-label">Lives</span>
+        <span class="hud-value" id="falling-lives" style="font-size:1rem">❤️❤️❤️</span>
+      </div>
+      <button class="btn btn-secondary btn-sm" onclick="App.showPage('home')">✕ Quit</button>
+    </div>
+
+    <!-- Word-to-spell display -->
+    <div style="
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 12px 20px;
+      margin-bottom: 12px;
+      text-align: center;
+    ">
+      <div style="font-size:0.72rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);margin-bottom:6px">Spell this word:</div>
+      <div id="falling-word-display" style="display:flex;gap:4px;justify-content:center;flex-wrap:wrap;min-height:44px;align-items:center"></div>
+    </div>
+
+    <!-- Game canvas area -->
+    <div id="falling-game-area" style="position:relative;">
+      <!-- Question header -->
+      <div class="falling-question" style="position:sticky;top:0;z-index:10">
+        <div id="falling-question-text" style="font-family:var(--font-display);font-size:1.5rem;color:var(--accent-sun)">Loading…</div>
+        <small id="falling-hint"></small>
+      </div>
+      <!-- Fruits and basket rendered by JS -->
+    </div>
+
+    <p class="text-center mt-sm" style="font-size:0.8rem;color:var(--text-muted)">
+      🖱️ Move mouse or use ← → arrow keys to move the basket
+    </p>
+
+  </div>
+</div><!-- /page-falling -->
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     PAGE: FILL IN THE BLANK
+════════════════════════════════════════════════════════════ -->
+<div id="page-fill" class="page">
+  <div class="container" style="max-width:700px">
+
+    <div class="game-hud mt-md">
+      <div class="hud-item">
+        <span class="hud-label">Score</span>
+        <span class="hud-value" id="fill-score">0</span>
+      </div>
+      <div class="hud-item">
+        <div class="timer-ring-wrap">
+          <svg class="timer-ring" width="52" height="52" viewBox="0 0 52 52">
+            <circle class="bg" cx="26" cy="26" r="22"/>
+            <circle class="fg" cx="26" cy="26" r="22" stroke-dasharray="138 138"/>
+          </svg>
+          <div class="timer-center">30</div>
+        </div>
+      </div>
+      <div class="hud-item">
+        <span class="hud-label">Progress</span>
+        <span class="hud-value" id="fill-correct" style="font-size:1rem">0/10</span>
+      </div>
+      <button class="btn btn-secondary btn-sm" onclick="App.showPage('home')">✕ Quit</button>
+    </div>
+
+    <div id="fill-container">
+      <!-- Populated by FillGame.js -->
+    </div>
+
+  </div>
+</div><!-- /page-fill -->
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     PAGE: RESULTS
+════════════════════════════════════════════════════════════ -->
+<div id="page-results" class="page">
+  <div class="container" style="max-width:600px">
+    <div id="results-content" class="mt-lg">
+      <!-- Populated by UI.showResults() -->
+    </div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     PAGE: HIGH SCORES
+════════════════════════════════════════════════════════════ -->
+<div id="page-highscores" class="page">
+  <div class="container">
+
+    <div class="hero" style="padding: 50px 0 30px">
+      <h1>🏆 High Scores</h1>
+      <p>Your best performances across all games and languages.</p>
+    </div>
+
+    <div class="highscores-wrap">
+
+      <div class="scores-filter" id="scores-filter-game"></div>
+      <div class="scores-filter" id="scores-filter-lang"></div>
+
+      <div id="highscores-list" class="mt-md">
+        <!-- Populated by HighScores.render() -->
+      </div>
+
+      <div class="text-center mt-lg">
+        <button class="btn btn-danger btn-sm" onclick="HighScores.confirmClear()">🗑 Clear All Scores</button>
+      </div>
+
+    </div>
+  </div>
+</div><!-- /page-highscores -->
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     MODALS
+════════════════════════════════════════════════════════════ -->
+
+<!-- Player Name Modal -->
+<div class="modal-overlay" id="name-modal">
+  <div class="modal">
+    <h2>👤 Your Name</h2>
+    <p>Enter your name to appear on the leaderboard.</p>
+    <input
+      type="text"
+      id="name-input"
+      class="fill-input"
+      placeholder="Enter your name…"
+      maxlength="20"
+      style="display:block;margin:0 auto 20px"
+    />
+    <div class="modal-actions">
+      <button class="btn btn-primary" onclick="UI.saveName()">Save</button>
+      <button class="btn btn-secondary" onclick="document.getElementById('name-modal').classList.remove('open')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- Clear Scores Confirmation Modal -->
+<div class="modal-overlay" id="clear-modal">
+  <div class="modal">
+    <h2>🗑 Clear All Scores?</h2>
+    <p>This will permanently delete all your high scores. This cannot be undone.</p>
+    <div class="modal-actions">
+      <button class="btn btn-danger" onclick="HighScores.doClear()">Yes, Delete All</button>
+      <button class="btn btn-secondary" onclick="document.getElementById('clear-modal').classList.remove('open')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     TOAST CONTAINER
+════════════════════════════════════════════════════════════ -->
+<div id="toast-container"></div>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     SCRIPTS  (load order matters)
+════════════════════════════════════════════════════════════ -->
+<script src="games/js/app.js"></script>
+<script src="games/js/ui.js"></script>
+<script src="games/js/quiz.js"></script>
+<script src="games/js/memory.js"></script>
+<script src="games/js/falling.js"></script>
+<script src="games/js/fill.js"></script>
+<script src="games/js/highscores.js"></script>
+
+<script>
+  // ── Bootstrap ──────────────────────────────────────────────
+  document.addEventListener('DOMContentLoaded', () => {
+
+    // Set player name in nav
+    document.getElementById('nav-player-name').textContent = App.state.playerName;
+
+    // Load languages on home page
+    UI.renderLanguages();
+
+    // Close modals on overlay click
+    document.querySelectorAll('.modal-overlay').forEach(overlay => {
+      overlay.addEventListener('click', e => {
+        if (e.target === overlay) overlay.classList.remove('open');
+      });
+    });
+
+    // Prompt for name on first visit
+    if (!localStorage.getItem('linguaplay_name')) {
+      setTimeout(() => UI.promptName(), 800);
+    }
+  });
+</script>
+
+</body>
+</html>

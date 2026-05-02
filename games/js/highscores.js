@@ -46,7 +46,7 @@ const HighScores = (() => {
       return;
     }
 
-    const gameIcons = { quiz:'🎯', memory:'🧠', falling:'🍎', fill:'✍️' };
+    const gameIcons = { quiz:'🎯', memory:'🧠', falling:'🍎', fill:'✍️', invaders:'👾' };
     const rankEmoji = ['🥇','🥈','🥉'];
     const rankClass = ['gold','silver','bronze'];
 

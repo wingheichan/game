@@ -32,7 +32,7 @@
 
     <!-- Hero -->
     <div class="hero">
-      <div class="hero-badge">🎮 5 Games &nbsp;•&nbsp; 4 Languages &nbsp;•&nbsp; 100s of Words</div>
+      <div class="hero-badge">🎮 6 Games &nbsp;•&nbsp; 4 Languages &nbsp;•&nbsp; 100s of Words</div>
       <h1>Learn Languages<br/>by Playing Games</h1>
       <p>Pick a language, choose a topic, and dive into interactive games that make vocabulary stick.</p>
     </div>
@@ -84,6 +84,12 @@
           <span class="game-card-icon" style="color:var(--accent-amber)">👾</span>
           <h3>Space Invaders</h3>
           <p>Shoot alien ships in the right order to spell the translation. Watch out for confuser letters!</p>
+        </div>
+
+        <div class="game-card" data-game="humans" onclick="UI.launchGame('humans')">
+          <span class="game-card-icon" style="color:var(--accent-coral)">⚔️</span>
+          <h3>Humans vs Monsters</h3>
+          <p>Answer correctly to spawn humans! Wrong answers enrage monsters. Defend your home!</p>
         </div>
 
       </div>
@@ -317,6 +323,51 @@
 
 
 <!-- ═══════════════════════════════════════════════════════════
+     PAGE: HUMANS VS MONSTERS
+════════════════════════════════════════════════════════════ -->
+<div id="page-humans" class="page">
+  <div class="container" style="max-width:900px">
+
+    <!-- HUD -->
+    <div class="game-hud mt-md">
+      <div class="hud-item">
+        <span class="hud-label">Score</span>
+        <span class="hud-value" id="hvm-score">0</span>
+      </div>
+      <div class="hud-item">
+        <span class="hud-label">Time</span>
+        <span class="hud-value" id="hvm-timer">1:30</span>
+      </div>
+      <div class="hud-item">
+        <span class="hud-label">Lives</span>
+        <span class="hud-value" id="hvm-lives" style="font-size:1rem">❤️❤️❤️</span>
+      </div>
+      <button class="btn btn-secondary btn-sm" onclick="App.showPage('home')">✕ Quit</button>
+    </div>
+
+    <!-- Question + 4 answer buttons — outside canvas -->
+    <div class="hvm-question-wrap">
+      <div style="font-size:0.7rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);margin-bottom:6px">Translate to defend your home:</div>
+      <div id="hvm-question" style="min-height:52px;display:flex;flex-direction:column;align-items:center;justify-content:center;"></div>
+    </div>
+
+    <div class="hvm-options-grid" id="hvm-options">
+      <!-- Populated by JS -->
+    </div>
+
+    <!-- Battle canvas -->
+    <canvas id="humans-canvas"></canvas>
+
+    <p class="hvm-battle-hint">
+      ✅ Correct answer → Human spawns from house and fights monsters &nbsp;·&nbsp;
+      ❌ Wrong answer → Nearest monster becomes enraged 😈
+    </p>
+
+  </div>
+</div><!-- /page-humans -->
+
+
+<!-- ═══════════════════════════════════════════════════════════
      PAGE: RESULTS
 ════════════════════════════════════════════════════════════ -->
 <div id="page-results" class="page">
@@ -411,6 +462,7 @@
 <script src="games/js/fill.js"></script>
 <script src="games/js/highscores.js"></script>
 <script src="games/js/invaders.js"></script>
+<script src="games/js/humans.js"></script>
 
 <script>
   // ── Bootstrap ──────────────────────────────────────────────

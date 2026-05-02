@@ -90,6 +90,7 @@ const UI = (() => {
       case 'memory':  MemoryGame.init(); break;
       case 'falling': FallingGame.init(); break;
       case 'fill':    FillGame.init(); break;
+      case 'invaders': InvadersGame.init(); break;
     }
   }
 

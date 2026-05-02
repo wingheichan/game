@@ -91,6 +91,7 @@ const UI = (() => {
       case 'falling': FallingGame.init(); break;
       case 'fill':    FillGame.init(); break;
       case 'invaders': InvadersGame.init(); break;
+      case 'humans':   HumansGame.init();   break;
     }
   }
 

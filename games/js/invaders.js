@@ -497,10 +497,16 @@ const InvadersGame = (() => {
     drawShipShape(a.glyph, col);   // shapes already drawn at 1.5× coords
 
     ctx.shadowBlur  = 0;
-    ctx.fillStyle   = '#ffffff';
-    ctx.font        = 'bold 13px "Space Mono", monospace';
+    ctx.font        = '600 15px Arial, sans-serif';
     ctx.textAlign   = 'center';
     ctx.textBaseline = 'middle';
+    // Dark outline so letter is readable against any ship color
+    ctx.strokeStyle = 'rgba(0,0,0,0.75)';
+    ctx.lineWidth   = 3;
+    ctx.lineJoin    = 'round';
+    ctx.strokeText(a.letter, 0, 2);
+    // White fill on top
+    ctx.fillStyle   = '#ffffff';
     ctx.fillText(a.letter, 0, 2);
 
     ctx.restore();

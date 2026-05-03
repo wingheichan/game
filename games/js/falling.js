@@ -136,9 +136,7 @@ const FallingGame = (() => {
 
     // These elements live OUTSIDE the canvas — always safe to update
     const qEl   = document.getElementById('falling-question-text');
-    const hintEl = document.getElementById('falling-hint');
     if (qEl)    qEl.textContent  = targetWord;
-    if (hintEl) hintEl.textContent = `Hint: ${w.hint}`;
 
     redrawSlots();
   }

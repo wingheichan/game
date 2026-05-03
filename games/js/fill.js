@@ -36,6 +36,7 @@ const FillGame = (() => {
     current = 0;
     correct = 0;
     totalTimeLeft = 0;
+    App.ActiveGame.register(() => { clearInterval(timer); });
     App.showPage('fill');
     renderQuestion();
   }
@@ -182,6 +183,7 @@ const FillGame = (() => {
 
   // ── End ────────────────────────────────────────────────────
   function endGame() {
+    App.ActiveGame.register(null);
     clearInterval(timer);
     const score = App.calcScore(correct, sentences.length, totalTimeLeft, TIME_PER_Q * sentences.length);
     UI.showResults({ score, correct, total: sentences.length, timeLeft: totalTimeLeft, maxTime: TIME_PER_Q * sentences.length, gameType: 'fill' });

@@ -52,7 +52,6 @@ const QuizGame = (() => {
       </div>
       <div class="quiz-question bounce-in">
         <div class="word">${word.word}</div>
-        <div class="hint">${word.hint}</div>
       </div>
       <div class="quiz-options">
         ${options.map((opt, i) => `

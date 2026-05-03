@@ -35,6 +35,7 @@ const MemoryGame = (() => {
     wrongStreak = 0;
     selectedLeft = null;
     selectedRight = null;
+    App.ActiveGame.register(() => { clearInterval(gameTimer); });
     App.showPage('memory');
     renderBoard();
     setMode(mode);
@@ -232,6 +233,7 @@ const MemoryGame = (() => {
 
   // ── End ────────────────────────────────────────────────────
   function endGame() {
+    App.ActiveGame.register(null);
     clearInterval(gameTimer);
     const finalScore = score + (matchedCount === PAIRS ? timeLeft * 5 : 0);
     UI.showResults({ score: finalScore, correct: matchedCount, total: PAIRS, timeLeft, maxTime: GAME_TIME, gameType: 'memory' });

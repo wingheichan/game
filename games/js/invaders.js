@@ -43,19 +43,6 @@ const InvadersGame = (() => {
     H:['A'],      Z:['S','X'],
   };
 
-  // Alien ship SVG glyphs (5 designs, cycled by column)
-  const SHIP_GLYPHS = [
-    // design 0 – classic invader
-    `<polygon points="4,18 16,18 16,14 20,14 20,10 24,10 24,4 20,4 20,0 12,0 12,4 8,4 8,0 0,0 0,4 4,4 4,10 8,10 8,14 4,14" fill="currentColor"/>`,
-    // design 1 – crab
-    `<path d="M2,16 Q4,8 8,8 L12,4 L16,8 Q20,8 22,16 L18,18 L18,14 L12,12 L6,14 L6,18 Z" fill="currentColor"/>`,
-    // design 2 – squid
-    `<path d="M8,0 L16,0 L18,6 L22,4 L20,10 L22,18 L16,16 L12,20 L8,16 L2,18 L4,10 L2,4 L6,6 Z" fill="currentColor"/>`,
-    // design 3 – bug
-    `<path d="M4,2 L8,0 L12,2 L16,0 L20,2 L20,8 L22,6 L20,12 L16,18 L12,20 L8,18 L4,12 L2,6 L4,8 Z" fill="currentColor"/>`,
-    // design 4 – UFO
-    `<ellipse cx="12" cy="14" rx="10" ry="5" fill="currentColor"/><ellipse cx="12" cy="10" rx="6" ry="5" fill="currentColor"/>`,
-  ];
 
   // ── State ────────────────────────────────────────────────────
   let words = [], wordIdx = 0;
@@ -206,7 +193,7 @@ const InvadersGame = (() => {
     const letters = shuffle10(pool.slice(0, ALIEN_COLS));
 
     // Colors per alien (rotating palette)
-    const COLORS = ['#a855f7','#38bdf8','#4ecdc4','#f9c846','#ff6b6b','#84cc16','#fb923c','#ec4899','#60a5fa','#34d399'];
+    const COLORS = ['#a855f7', '#4ecdc4'];
 
     // Layout
     // Place aliens evenly across the canvas with 80px padding each side
@@ -222,8 +209,8 @@ const InvadersGame = (() => {
       x:      startX + i * spacing,
       y:      startY,
       baseX:  startX + i * spacing,
-      glyph:  i % SHIP_GLYPHS.length,
-      color:  COLORS[i % COLORS.length],
+      glyph:  0,
+      color:  COLORS[i % 2],
       highlight: false,
       highlightTimer: 0,
     }));
@@ -520,52 +507,14 @@ const InvadersGame = (() => {
   }
 
   function drawShipShape(glyph, color) {
-    // All coordinates are 1.5× the original — ships are 50% bigger than original
+    // Classic Space Invader shape — coordinates at 1.5× original size
     ctx.fillStyle = color;
-    const g = glyph % 5;
-    if (g === 0) {
-      // Classic invader  (original ×1.5)
-      ctx.fillRect(-15, -12,  6, 18);
-      ctx.fillRect(  9, -12,  6, 18);
-      ctx.fillRect( -9, -18, 18, 12);
-      ctx.fillRect(-21,  -6,  9,  9);
-      ctx.fillRect( 12,  -6,  9,  9);
-      ctx.fillRect( -6, -24, 12,  9);
-    } else if (g === 1) {
-      // Crab  (original ×1.5)
-      ctx.beginPath();
-      ctx.moveTo(-18, 12); ctx.lineTo(-12, -12); ctx.lineTo(0, -18);
-      ctx.lineTo(12, -12); ctx.lineTo(18,  12);  ctx.lineTo(12,  6);
-      ctx.lineTo(0,  12);  ctx.lineTo(-12,  6);  ctx.closePath();
-      ctx.fill();
-      ctx.fillRect(-24,  3,  9, 6);
-      ctx.fillRect( 15,  3,  9, 6);
-    } else if (g === 2) {
-      // Squid  (original ×1.5)
-      ctx.beginPath();
-      ctx.arc(0, -6, 15, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.fillRect(-9,  6,  6, 12);
-      ctx.fillRect( 3,  6,  6, 12);
-      ctx.fillRect(-3,  9,  6,  9);
-    } else if (g === 3) {
-      // Bug  (original ×1.5)
-      ctx.beginPath();
-      ctx.ellipse(0, 0, 17, 14, 0, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.fillRect(-21, -6,  9,  5);
-      ctx.fillRect( 12, -6,  9,  5);
-      ctx.fillRect(-18,  3,  8,  5);
-      ctx.fillRect( 11,  3,  8,  5);
-    } else {
-      // UFO disc  (original ×1.5)
-      ctx.beginPath();
-      ctx.ellipse(0,  6, 20,  8, 0, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.beginPath();
-      ctx.ellipse(0, -2, 11,  9, 0, 0, Math.PI * 2);
-      ctx.fill();
-    }
+    ctx.fillRect(-15, -12,  6, 18);
+    ctx.fillRect(  9, -12,  6, 18);
+    ctx.fillRect( -9, -18, 18, 12);
+    ctx.fillRect(-21,  -6,  9,  9);
+    ctx.fillRect( 12,  -6,  9,  9);
+    ctx.fillRect( -6, -24, 12,  9);
   }
 
   function drawCannon() {

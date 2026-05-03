@@ -47,6 +47,15 @@ const FallingGame = (() => {
     cancelAnimationFrame(animFrame);
     document.removeEventListener('keydown', onKeyDown);
 
+    App.ActiveGame.register(() => {
+      gameRunning = false;
+      clearInterval(gameTimer);
+      clearInterval(spawnTimer);
+      cancelAnimationFrame(animFrame);
+      document.removeEventListener('keydown', onKeyDown);
+      fruits.forEach(f => { try { f.el.remove(); } catch(e){} });
+      fruits = [];
+    });
     App.showPage('falling');
     // wait one frame so the page is rendered and offsetWidth is valid
     requestAnimationFrame(() => requestAnimationFrame(setupGame));
@@ -317,6 +326,7 @@ const FallingGame = (() => {
   // ── End ───────────────────────────────────────────────────────
   function endGame() {
     if (!gameRunning) return;
+    App.ActiveGame.register(null);
     gameRunning = false;
     clearInterval(gameTimer);
     clearInterval(spawnTimer);

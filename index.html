@@ -211,9 +211,7 @@
       margin-bottom: 8px;
       text-align: center;
     ">
-      <div style="font-size:0.7rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);margin-bottom:4px">Translate this word:</div>
       <div id="falling-question-text" style="font-family:var(--font-display);font-size:2rem;color:var(--accent-sun);line-height:1.2">–</div>
-      <div id="falling-hint" style="font-size:0.78rem;color:var(--text-muted);margin-top:2px;font-style:italic"></div>
     </div>
 
     <!-- Letter progress display — OUTSIDE game canvas, never wiped -->
@@ -225,16 +223,12 @@
       margin-bottom: 10px;
       text-align: center;
     ">
-      <div style="font-size:0.7rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);margin-bottom:6px">Catch the letters to spell:</div>
       <div id="falling-word-display" style="display:flex;gap:4px;justify-content:center;flex-wrap:wrap;min-height:40px;align-items:center"></div>
     </div>
 
     <!-- Game canvas — JS wipes this with innerHTML='' on each init, that's fine -->
     <div id="falling-game-area"></div>
 
-    <p class="text-center mt-sm" style="font-size:0.8rem;color:var(--text-muted)">
-      🖱️ Move mouse · 📱 Touch to drag · ⌨️ Arrow keys
-    </p>
 
   </div>
 </div><!-- /page-falling -->
@@ -300,23 +294,17 @@
 
     <!-- Question panel — outside canvas, never wiped -->
     <div class="inv-info-bar">
-      <div class="inv-label">Translate this word:</div>
       <div id="inv-question" class="inv-question-text">–</div>
-      <div id="inv-hint"     class="inv-hint-text"></div>
     </div>
 
     <!-- Letter slots — outside canvas, never wiped -->
     <div class="inv-info-bar">
-      <div class="inv-label">Shoot the letters in order to spell the translation:</div>
       <div id="inv-slots" style="display:flex;gap:4px;justify-content:center;flex-wrap:wrap;min-height:40px;align-items:center;margin-top:6px;"></div>
     </div>
 
     <!-- Canvas — JS owns everything inside here -->
     <canvas id="invaders-canvas"></canvas>
 
-    <p class="inv-controls-hint">
-      ⌨️ Arrow keys / A-D to move &nbsp;·&nbsp; Space or ↑ to shoot &nbsp;·&nbsp; 🖱️ Mouse move + click &nbsp;·&nbsp; 📱 Touch
-    </p>
 
   </div>
 </div><!-- /page-invaders -->
@@ -347,7 +335,6 @@
 
     <!-- Question + 4 answer buttons — outside canvas -->
     <div class="hvm-question-wrap">
-      <div style="font-size:0.7rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);margin-bottom:6px">Translate to defend your home:</div>
       <div id="hvm-question" style="min-height:52px;display:flex;flex-direction:column;align-items:center;justify-content:center;"></div>
     </div>
 
@@ -358,10 +345,6 @@
     <!-- Battle canvas -->
     <canvas id="humans-canvas"></canvas>
 
-    <p class="hvm-battle-hint">
-      ✅ Correct answer → Human spawns from house and fights monsters &nbsp;·&nbsp;
-      ❌ Wrong answer → Nearest monster becomes enraged 😈
-    </p>
 
   </div>
 </div><!-- /page-humans -->

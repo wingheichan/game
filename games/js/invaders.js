@@ -27,10 +27,10 @@ const InvadersGame = (() => {
   const ALIEN_ROWS   = 1;          // single row
   const LIVES_START  = 3;
   const BULLET_SPEED = 10;
-  const ALIEN_DROP   = 18;         // px dropped each time they hit a wall
-  const SPEED_INIT   = 1.2;        // px per frame horizontal
-  const SPEED_STEP   = 0.25;       // added on wrong shot
-  const SPEED_MAX    = 4.5;
+  const ALIEN_DROP   = 10;         // px dropped each time they hit a wall
+  const SPEED_INIT   = 0.6;        // px per frame horizontal
+  const SPEED_STEP   = 0.15;       // added on wrong shot
+  const SPEED_MAX    = 2.5;
 
   // Similar-sound confuser map  (key → possible confusers)
   const CONFUSERS = {
@@ -208,16 +208,19 @@ const InvadersGame = (() => {
     const COLORS = ['#a855f7','#38bdf8','#4ecdc4','#f9c846','#ff6b6b','#84cc16','#fb923c','#ec4899','#60a5fa','#34d399'];
 
     // Layout
-    const totalW  = ALIEN_COLS * 90;
-    const startX  = (W - totalW) / 2 + 45;
-    const startY  = 120;
+    // Place aliens evenly across the canvas with 80px padding each side
+    // so they have room to march before hitting a wall
+    const padding = 80;
+    const spacing = Math.floor((W - padding * 2) / (ALIEN_COLS - 1));
+    const startX  = padding;
+    const startY  = 90;
 
     aliens = letters.map((letter, i) => ({
       letter,
       alive:  true,
-      x:      startX + i * 90,
+      x:      startX + i * spacing,
       y:      startY,
-      baseX:  startX + i * 90,
+      baseX:  startX + i * spacing,
       glyph:  i % SHIP_GLYPHS.length,
       color:  COLORS[i % COLORS.length],
       highlight: false,
@@ -294,7 +297,7 @@ const InvadersGame = (() => {
       let hit = false;
       for (const a of aliens) {
         if (!a.alive) continue;
-        if (Math.abs(b.x - a.x) < 34 && Math.abs(b.y - a.y) < 34) {
+        if (Math.abs(b.x - a.x) < 28 && Math.abs(b.y - a.y) < 28) {
           hit = true;
           bullets.splice(i, 1);
           handleHit(a);
@@ -334,7 +337,7 @@ const InvadersGame = (() => {
     let hitWall = false;
     for (const a of alive) {
       a.x = a.baseX + alienOffset;
-      if (a.x < 22 || a.x > W - 22) hitWall = true;
+      if (a.x < 30 || a.x > W - 30) hitWall = true;
     }
 
     if (hitWall) {
@@ -497,13 +500,13 @@ const InvadersGame = (() => {
     ctx.shadowBlur  = a.highlight ? 28 : 14;
 
     // Scale up 2× so ships are clearly visible
-    ctx.scale(2, 2);
+    ctx.scale(1.5, 1.5);
 
     const col = a.highlight ? '#ff6b6b' : a.color;
     drawShipShape(a.glyph, col);
 
     // Letter label — drawn at 1× scale so it stays readable
-    ctx.scale(0.5, 0.5);   // undo the 2× before drawing text
+    ctx.scale(0.667, 0.667);   // undo the 1.5× before drawing text
     ctx.shadowBlur  = 0;
     ctx.fillStyle   = '#ffffff';
     ctx.font        = 'bold 16px "Space Mono", monospace';

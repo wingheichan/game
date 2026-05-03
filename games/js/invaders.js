@@ -104,6 +104,13 @@ const InvadersGame = (() => {
     document.removeEventListener('keydown', onKeyDown);
     document.removeEventListener('keyup',   onKeyUp);
 
+    App.ActiveGame.register(() => {
+      gameRunning = false;
+      clearInterval(gameTimer);
+      cancelAnimationFrame(animFrame);
+      document.removeEventListener('keydown', onKeyDown);
+      document.removeEventListener('keyup',   onKeyUp);
+    });
     App.showPage('invaders');
     requestAnimationFrame(() => requestAnimationFrame(setupGame));
   }
@@ -201,16 +208,16 @@ const InvadersGame = (() => {
     const COLORS = ['#a855f7','#38bdf8','#4ecdc4','#f9c846','#ff6b6b','#84cc16','#fb923c','#ec4899','#60a5fa','#34d399'];
 
     // Layout
-    const totalW  = ALIEN_COLS * 60;
-    const startX  = (W - totalW) / 2 + 30;
+    const totalW  = ALIEN_COLS * 90;
+    const startX  = (W - totalW) / 2 + 45;
     const startY  = 120;
 
     aliens = letters.map((letter, i) => ({
       letter,
       alive:  true,
-      x:      startX + i * 60,
+      x:      startX + i * 90,
       y:      startY,
-      baseX:  startX + i * 60,
+      baseX:  startX + i * 90,
       glyph:  i % SHIP_GLYPHS.length,
       color:  COLORS[i % COLORS.length],
       highlight: false,
@@ -287,7 +294,7 @@ const InvadersGame = (() => {
       let hit = false;
       for (const a of aliens) {
         if (!a.alive) continue;
-        if (Math.abs(b.x - a.x) < 22 && Math.abs(b.y - a.y) < 22) {
+        if (Math.abs(b.x - a.x) < 34 && Math.abs(b.y - a.y) < 34) {
           hit = true;
           bullets.splice(i, 1);
           handleHit(a);
@@ -487,17 +494,19 @@ const InvadersGame = (() => {
 
     // Glow
     ctx.shadowColor = a.highlight ? '#ff6b6b' : a.color;
-    ctx.shadowBlur  = a.highlight ? 20 : 10;
+    ctx.shadowBlur  = a.highlight ? 28 : 14;
 
-    // Ship body (SVG path mapped to canvas) – we use a simpler approach:
-    // draw a pixel-art style spaceship with canvas primitives
+    // Scale up 2× so ships are clearly visible
+    ctx.scale(2, 2);
+
     const col = a.highlight ? '#ff6b6b' : a.color;
     drawShipShape(a.glyph, col);
 
-    // Letter label
+    // Letter label — drawn at 1× scale so it stays readable
+    ctx.scale(0.5, 0.5);   // undo the 2× before drawing text
     ctx.shadowBlur  = 0;
     ctx.fillStyle   = '#ffffff';
-    ctx.font        = 'bold 13px "Space Mono", monospace';
+    ctx.font        = 'bold 16px "Space Mono", monospace';
     ctx.textAlign   = 'center';
     ctx.textBaseline = 'middle';
     ctx.fillText(a.letter, 0, 2);
@@ -612,6 +621,7 @@ const InvadersGame = (() => {
   // ── End ───────────────────────────────────────────────────────
   function endGame() {
     if (!gameRunning) return;
+    App.ActiveGame.register(null);
     gameRunning = false;
     clearInterval(gameTimer);
     cancelAnimationFrame(animFrame);

@@ -72,7 +72,6 @@ const FillGame = (() => {
           autocapitalize="off"
           spellcheck="false"
         />
-        <div class="fill-hint" id="fill-hint-text">💡 Hint: ${q.hint}</div>
       </div>
       <div class="flex gap-md justify-center flex-wrap">
         <button class="btn btn-primary" onclick="FillGame.submit()">✅ Check</button>

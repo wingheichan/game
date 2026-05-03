@@ -165,9 +165,7 @@ const InvadersGame = (() => {
 
     // Update static UI (outside canvas)
     const qEl = document.getElementById('inv-question');
-    const hEl = document.getElementById('inv-hint');
     if (qEl) qEl.textContent = targetWord;
-    if (hEl) hEl.textContent = `Hint: ${w.hint}`;
 
     buildAliens();
     updateSlotsUI();

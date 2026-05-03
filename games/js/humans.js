@@ -86,6 +86,12 @@ const HumansGame = (() => {
     clearInterval(gameTimer);
     cancelAnimationFrame(animFrame);
 
+    App.ActiveGame.register(() => {
+      gameRunning = false;
+      clearInterval(gameTimer);
+      clearInterval(monsterTimer);
+      cancelAnimationFrame(animFrame);
+    });
     App.showPage('humans');
     requestAnimationFrame(() => requestAnimationFrame(setupGame));
   }
@@ -691,6 +697,7 @@ const HumansGame = (() => {
   // ── End ────────────────────────────────────────────────────
   function endGame() {
     if (!gameRunning) return;
+    App.ActiveGame.register(null);
     gameRunning = false;
     clearInterval(gameTimer);
     clearInterval(monsterTimer);

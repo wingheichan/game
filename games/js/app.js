@@ -34,6 +34,7 @@ const App = (() => {
 
   // ── Navigation ─────────────────────────────────────────────
   function showPage(id) {
+    ActiveGame.stop();   // kill any running game before navigating
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
     const pg = document.getElementById('page-' + id);
     if (pg) {
@@ -121,10 +122,23 @@ const App = (() => {
     return { label: '💪 Try Again!', color: '#ff6b6b' };
   }
 
+  // ── Active-game cleanup registry ─────────────────────────────
+  // Each game calls ActiveGame.register(cleanupFn) when it starts.
+  // App.showPage() calls ActiveGame.stop() before switching pages
+  // so timers/loops never leak into the background.
+  const ActiveGame = {
+    _fn: null,
+    register(fn) { this._fn = fn; },
+    stop() {
+      if (this._fn) { try { this._fn(); } catch(e){} this._fn = null; }
+    }
+  };
+
   // ── Public API ─────────────────────────────────────────────
   return {
     state,
     showPage,
+    ActiveGame,
     toast,
     loadJSON,
     getVocabulary,

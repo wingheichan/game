@@ -130,8 +130,7 @@ const HumansGame = (() => {
   function renderQuestion() {
     const qEl = document.getElementById('hvm-question');
     if (qEl) {
-      qEl.innerHTML = `<span style="color:var(--accent-sun);font-family:var(--font-display);font-size:1.8rem">${currentWord.word}</span>
-        <span style="color:var(--text-muted);font-size:0.8rem;display:block;margin-top:2px;font-style:italic">${currentWord.hint}</span>`;
+      qEl.innerHTML = `<span style="color:var(--accent-sun);font-family:var(--font-display);font-size:1.8rem">${currentWord.word}</span>`;
     }
 
     const btnsEl = document.getElementById('hvm-options');

@@ -81,6 +81,7 @@ const InvadersGame = (() => {
   // Alien march state
   let alienDir    = 1;   // 1=right, -1=left
   let alienOffset = 0;   // accumulated horizontal offset from start positions
+  let alienBounceCount = 0; // drops every 2 bounces = 1 full sweep
 
   // Input
   let keys = {};
@@ -229,6 +230,7 @@ const InvadersGame = (() => {
 
     alienOffset = 0;
     alienDir    = 1;
+    alienBounceCount = 0;
   }
 
   function shuffle10(arr) {
@@ -337,15 +339,20 @@ const InvadersGame = (() => {
     let hitWall = false;
     for (const a of alive) {
       a.x = a.baseX + alienOffset;
-      if (a.x < 30 || a.x > W - 30) hitWall = true;
+      if (a.x < 32 || a.x > W - 32) hitWall = true;
     }
 
     if (hitWall) {
       alienDir *= -1;
       // Nudge so they don't re-trigger immediately
-      alienOffset += alienSpeed * alienDir * 2;
-      // Drop down
-      alive.forEach(a => { a.y += ALIEN_DROP; a.baseX = a.x - alienOffset; });
+      alienOffset += alienSpeed * alienDir * 4;
+      alienBounceCount++;
+      // Only drop every 2 bounces (= 1 full left-right-left sweep)
+      if (alienBounceCount % 2 === 0) {
+        alive.forEach(a => { a.y += ALIEN_DROP; a.baseX = a.x - alienOffset; });
+      } else {
+        alive.forEach(a => { a.baseX = a.x - alienOffset; });
+      }
     }
   }
 
@@ -497,19 +504,14 @@ const InvadersGame = (() => {
 
     // Glow
     ctx.shadowColor = a.highlight ? '#ff6b6b' : a.color;
-    ctx.shadowBlur  = a.highlight ? 28 : 14;
-
-    // Scale up 2× so ships are clearly visible
-    ctx.scale(1.5, 1.5);
+    ctx.shadowBlur  = a.highlight ? 20 : 10;
 
     const col = a.highlight ? '#ff6b6b' : a.color;
-    drawShipShape(a.glyph, col);
+    drawShipShape(a.glyph, col);   // shapes already drawn at 1.5× coords
 
-    // Letter label — drawn at 1× scale so it stays readable
-    ctx.scale(0.667, 0.667);   // undo the 1.5× before drawing text
     ctx.shadowBlur  = 0;
     ctx.fillStyle   = '#ffffff';
-    ctx.font        = 'bold 16px "Space Mono", monospace';
+    ctx.font        = 'bold 13px "Space Mono", monospace';
     ctx.textAlign   = 'center';
     ctx.textBaseline = 'middle';
     ctx.fillText(a.letter, 0, 2);
@@ -518,49 +520,50 @@ const InvadersGame = (() => {
   }
 
   function drawShipShape(glyph, color) {
+    // All coordinates are 1.5× the original — ships are 50% bigger than original
     ctx.fillStyle = color;
     const g = glyph % 5;
     if (g === 0) {
-      // Classic invader
-      ctx.fillRect(-10, -8,  4, 12);
-      ctx.fillRect(  6, -8,  4, 12);
-      ctx.fillRect( -6, -12, 12, 8);
-      ctx.fillRect(-14, -4,  6, 6);
-      ctx.fillRect(  8, -4,  6, 6);
-      ctx.fillRect( -4, -16, 8, 6);
+      // Classic invader  (original ×1.5)
+      ctx.fillRect(-15, -12,  6, 18);
+      ctx.fillRect(  9, -12,  6, 18);
+      ctx.fillRect( -9, -18, 18, 12);
+      ctx.fillRect(-21,  -6,  9,  9);
+      ctx.fillRect( 12,  -6,  9,  9);
+      ctx.fillRect( -6, -24, 12,  9);
     } else if (g === 1) {
-      // Crab
+      // Crab  (original ×1.5)
       ctx.beginPath();
-      ctx.moveTo(-12, 8); ctx.lineTo(-8, -8); ctx.lineTo(0, -12);
-      ctx.lineTo(8, -8);  ctx.lineTo(12, 8);  ctx.lineTo(8, 4);
-      ctx.lineTo(0, 8);   ctx.lineTo(-8, 4);  ctx.closePath();
+      ctx.moveTo(-18, 12); ctx.lineTo(-12, -12); ctx.lineTo(0, -18);
+      ctx.lineTo(12, -12); ctx.lineTo(18,  12);  ctx.lineTo(12,  6);
+      ctx.lineTo(0,  12);  ctx.lineTo(-12,  6);  ctx.closePath();
       ctx.fill();
-      ctx.fillRect(-16, 2, 6, 4);
-      ctx.fillRect(10,  2, 6, 4);
+      ctx.fillRect(-24,  3,  9, 6);
+      ctx.fillRect( 15,  3,  9, 6);
     } else if (g === 2) {
-      // Squid
+      // Squid  (original ×1.5)
       ctx.beginPath();
-      ctx.arc(0, -4, 10, 0, Math.PI * 2);
+      ctx.arc(0, -6, 15, 0, Math.PI * 2);
       ctx.fill();
-      ctx.fillRect(-6, 4, 4, 8);
-      ctx.fillRect( 2, 4, 4, 8);
-      ctx.fillRect(-2, 6, 4, 6);
+      ctx.fillRect(-9,  6,  6, 12);
+      ctx.fillRect( 3,  6,  6, 12);
+      ctx.fillRect(-3,  9,  6,  9);
     } else if (g === 3) {
-      // Bug
+      // Bug  (original ×1.5)
       ctx.beginPath();
-      ctx.ellipse(0, 0, 11, 9, 0, 0, Math.PI * 2);
+      ctx.ellipse(0, 0, 17, 14, 0, 0, Math.PI * 2);
       ctx.fill();
-      ctx.fillRect(-14, -4, 6, 3);
-      ctx.fillRect(  8, -4, 6, 3);
-      ctx.fillRect(-12,  2, 5, 3);
-      ctx.fillRect(  7,  2, 5, 3);
+      ctx.fillRect(-21, -6,  9,  5);
+      ctx.fillRect( 12, -6,  9,  5);
+      ctx.fillRect(-18,  3,  8,  5);
+      ctx.fillRect( 11,  3,  8,  5);
     } else {
-      // UFO disc
+      // UFO disc  (original ×1.5)
       ctx.beginPath();
-      ctx.ellipse(0, 4, 13, 5, 0, 0, Math.PI * 2);
+      ctx.ellipse(0,  6, 20,  8, 0, 0, Math.PI * 2);
       ctx.fill();
       ctx.beginPath();
-      ctx.ellipse(0, -1, 7, 6, 0, 0, Math.PI * 2);
+      ctx.ellipse(0, -2, 11,  9, 0, 0, Math.PI * 2);
       ctx.fill();
     }
   }

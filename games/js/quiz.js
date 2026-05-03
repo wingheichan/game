@@ -26,6 +26,7 @@ const QuizGame = (() => {
     current = 0;
     correct = 0;
     totalTimeLeft = 0;
+    App.ActiveGame.register(() => { clearInterval(timer); });
     App.showPage('quiz');
     renderQuestion();
   }
@@ -150,6 +151,7 @@ const QuizGame = (() => {
 
   // ── End ────────────────────────────────────────────────────
   function endGame() {
+    App.ActiveGame.register(null);
     clearInterval(timer);
     const score = App.calcScore(correct, words.length, totalTimeLeft, TIME_PER_Q * words.length);
     UI.showResults({ score, correct, total: words.length, timeLeft: totalTimeLeft, maxTime: TIME_PER_Q * words.length, gameType: 'quiz' });

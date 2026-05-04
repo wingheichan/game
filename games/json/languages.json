@@ -1,29 +1,19 @@
 {
   "languages": [
     {
-      "id": "spanish",
-      "name": "Spanish",
-      "flag": "🇪🇸",
+      "id": "latin",
+      "name": "Latin",
+      "flag": "LA",
       "categories": [
         {
-          "id": "basics",
-          "name": "Basics",
-          "subcategories": ["Greetings", "Numbers", "Colors", "Days"]
+          "id": "SPQR_1",
+          "name": "SPQR VWO 1",
+          "subcategories": ["Flumen", "Lupa", "Regnum", "Capitolium", "Ignis Vestae", "castor et pollux", "Triumphus", "Gladiatores", ]
         },
         {
-          "id": "food",
-          "name": "Food & Drink",
-          "subcategories": ["Fruits", "Vegetables", "Meals", "Drinks"]
-        },
-        {
-          "id": "travel",
-          "name": "Travel",
-          "subcategories": ["Transport", "Hotel", "Directions", "Shopping"]
-        },
-        {
-          "id": "body",
-          "name": "Body & Health",
-          "subcategories": ["Body Parts", "Feelings", "Illness", "Fitness"]
+          "id": "SPQR_2",
+          "name": "SPQR VWO 2",
+          "subcategories": ["Spectacula", "Pugna", "Circus Maximus"]
         }
       ]
     },

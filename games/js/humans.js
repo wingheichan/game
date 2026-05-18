@@ -171,7 +171,7 @@ const HumansGame = (() => {
     }
 
     // Next question after short delay
-    setTimeout(() => {
+    App.timer(() => {
       if (!gameRunning) return;
       if (questionsAnswered >= QUESTIONS_TOTAL) { endGame(); return; }
       loadQuestion();

@@ -129,7 +129,7 @@ const FillGame = (() => {
 
     input.disabled = true;
     updateHUD();
-    setTimeout(() => { current++; renderQuestion(); }, 1600);
+    App.timer(() => { current++; renderQuestion(); }, 1600);
   }
 
   function skip() {
@@ -139,7 +139,7 @@ const FillGame = (() => {
     const q = sentences[current];
     const feedback = document.getElementById('fill-feedback');
     if (feedback) feedback.innerHTML = `<span style="color:var(--text-muted)">Skipped — Answer: <strong style="color:var(--text-primary)">${q.answer}</strong></span>`;
-    setTimeout(() => { current++; renderQuestion(); }, 1200);
+    App.timer(() => { current++; renderQuestion(); }, 1200);
   }
 
   // ── Timer ──────────────────────────────────────────────────
@@ -155,7 +155,7 @@ const FillGame = (() => {
         const feedback = document.getElementById('fill-feedback');
         if (feedback) feedback.innerHTML = `<span style="color:var(--accent-coral)">⏰ Time's up! Answer: <strong style="color:var(--text-primary)">${q.answer}</strong></span>`;
         answered = true;
-        setTimeout(() => { current++; renderQuestion(); }, 1400);
+        App.timer(() => { current++; renderQuestion(); }, 1400);
       }
     }, 1000);
   }

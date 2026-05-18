@@ -297,7 +297,7 @@ const InvadersGame = (() => {
         score += 100;
         updateScoreEl();
         App.toast(`🎉 "${targetWord}" → "${targetAnswer}"  +100!`, 'success', 1600);
-        setTimeout(() => { if (gameRunning) loadWord(); }, 900);
+        App.timer(() => { if (gameRunning) loadWord(); }, 900);
       }
     } else {
       // ❌ Wrong — this ship starts falling, score penalty

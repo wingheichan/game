@@ -126,10 +126,24 @@ const App = (() => {
   // Each game calls ActiveGame.register(cleanupFn) when it starts.
   // App.showPage() calls ActiveGame.stop() before switching pages
   // so timers/loops never leak into the background.
+  // Tracked setTimeout — use App.timer() instead of setTimeout() in games.
+  // All pending timers are cancelled automatically when the game stops.
+  const _timers = new Set();
+  function timer(fn, ms) {
+    const id = setTimeout(() => { _timers.delete(id); fn(); }, ms);
+    _timers.add(id);
+    return id;
+  }
+  function clearAllTimers() {
+    _timers.forEach(id => clearTimeout(id));
+    _timers.clear();
+  }
+
   const ActiveGame = {
     _fn: null,
     register(fn) { this._fn = fn; },
     stop() {
+      clearAllTimers();                          // kill every pending setTimeout
       if (this._fn) { try { this._fn(); } catch(e){} this._fn = null; }
     }
   };
@@ -139,6 +153,7 @@ const App = (() => {
     state,
     showPage,
     ActiveGame,
+    timer,
     toast,
     loadJSON,
     getVocabulary,

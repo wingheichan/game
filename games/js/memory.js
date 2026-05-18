@@ -152,7 +152,7 @@ const MemoryGame = (() => {
       App.toast('Match! ✨', 'success', 900);
       updateHUD();
 
-      if (matchedCount === PAIRS) { setTimeout(endGame, 600); }
+      if (matchedCount === PAIRS) { App.timer(endGame, 600); }
     } else {
       // Wrong
       wrongStreak++;
@@ -161,7 +161,7 @@ const MemoryGame = (() => {
       selectedRight.classList.add('shake');
       App.toast('Try again!', 'error', 800);
 
-      setTimeout(() => {
+      App.timer(() => {
         if (selectedLeft)  {
           selectedLeft.classList.remove('selected', 'shake');
           if (mode === 1) selectedLeft.classList.add('closed');

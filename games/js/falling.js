@@ -258,7 +258,7 @@ const FallingGame = (() => {
         fruits.forEach(f => { f.dead = true; f.el.remove(); });
         fruits = [];
 
-        setTimeout(() => {
+        App.timer(() => {
           if (!gameRunning) return;
           loadWord();
           spawnFruit();

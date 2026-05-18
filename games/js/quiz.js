@@ -103,7 +103,7 @@ const QuizGame = (() => {
     if (!isCorrect) btn.classList.add('shake');
     updateHUD();
 
-    setTimeout(() => { current++; renderQuestion(); }, 1200);
+    App.timer(() => { current++; renderQuestion(); }, 1200);
   }
 
   // ── Timer ──────────────────────────────────────────────────
@@ -123,7 +123,7 @@ const QuizGame = (() => {
           b.classList.add('disabled');
           if (b.dataset.answer === words[current]?.translation) b.classList.add('correct');
         });
-        setTimeout(() => { current++; renderQuestion(); }, 1000);
+        App.timer(() => { current++; renderQuestion(); }, 1000);
       }
     }, 1000);
   }
